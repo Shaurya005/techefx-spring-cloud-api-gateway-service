@@ -1,31 +1,42 @@
 spring:
   application:
     name: techefx-spring-cloud-api-gateway-service
-  zipkin:
-    enabled: true
-    base-url: ${ZIPKIN_SERVER:http://localhost:9411/}
+#  zipkin:
+#    enabled: true
+#    base-url: ${ZIPKIN_SERVER:http://localhost:9411/}
 
+#Adding the routes. Use spring.cloud.gateway.routes to add the routing.
   cloud:
     gateway:
       routes:
-        - id: stock-enquiry
-          uri: http://techefx-product-enquiry-service:8700/
+        - id: stock-enquiry #It could be anything here in id but since I'm going to access stock enquiry service so here i'm saying stock-enquiry
+          uri: http://localhost:8700/
           predicates:
             - Path=/product-enquiry/**
+
+#  To specify the uri remember we are running stock enquiry on port number 8700 this is what we have specified. now let's specify the predicates, specify the
+#  predicates path with Path=/product-enquiry/**. so since we have single entry point for stock enquiry service so this is what actually we are defining we are
+#  saying that for this route this is the id and this is the uri so if anything comes from this path product-enquiry then please redirect to localhost 8700
+#  with this predicates that's it so you can now rerun this service.
+
+#  So to access product-enquiry service instead of 8700 just write 8900 and hit the service, now you can see that we are able to access product enquery endpoint
+#  through 8900 api gateways routing. If you keep on hitting this 2-3 times, all these instances values will be fetched so this time the response is coming from 8801
+#  again executing now response is coming from 8800 and when i click again now it is coming to 8802 the reason
+#  because we have run 3 instances of stock service so the api gateway is working with routing enabled.
 
 server:
   port: ${port:8900}
 
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: always
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka}
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"
+#  endpoint:
+#    health:
+#      show-details: always
